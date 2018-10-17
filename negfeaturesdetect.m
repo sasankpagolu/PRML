@@ -1,15 +1,15 @@
-function features=featuresdetect(B,weakfilters)
+function features=negfeaturesdetect(B)
 
-I=zeros(size(B,2),16,16);
+I=zeros(size(B,1),16,16);
 
-for i=1:size(B,2)
-    I(i,:,:)=reshape(B(:,i),[16,16]);
+for i=1:size(B,1)
+    I(i,:,:)=reshape(B(i,:,:),[16,16]);
 end
 
     I = normalize(I);
     II = integral(I);
    
-    features= compute_features(II,weakfilters);
+    features= compute_features(II);
     
     clear I;
     clear II;
@@ -17,12 +17,12 @@ end
     %save('features_detect.mat', '-v7.3', 'features');
 end
 
-function features = compute_features(II,weakfilters)
-features = zeros(size(weakfilters, 1), size(II, 1));
+function features = compute_features(II)
+
  filters=load('filters.mat');
-for j = 1:size(weakfilters, 1)
-    k=weakfilters(j);
-    [rects1, rects2] = filters.filters{k,:};
+ features = zeros(size(filters.filters, 1), size(II, 1));
+for j = 1:size(filters.filters, 1)
+    [rects1, rects2] = filters.filters{j,:};
     features(j,:) = apply_filter(II, rects1, rects2);
 end
 end
